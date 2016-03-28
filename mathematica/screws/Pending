@@ -1,0 +1,7 @@
+Pri	Date	Description
+
+3	12/92	Implement wrench calculations
+1	12/92	Write test suite and use for debugging
+4	12/92	Generalize routines to work for 2D (in addition to 3D)
+	12/92	Generalize routines to work for n-dim Euclidean space
+	12/92	Fix up error messages and add more error trapping
