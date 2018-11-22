@@ -1,0 +1,514 @@
+\input etexinfo			@c -*-texinfo-*-
+@c
+@c links.txi - screws package for mathematica
+@c
+@c Richard M. Murray
+@c 7 December 1991
+@c
+@c
+
+@setfilename links.info
+@settitle RobotLinks.m
+
+@c put function entries in main index
+@synindex fn cp
+
+@titlepage
+@center @titlefont{RobotLinks.m}
+@sp 1
+@center {@chaprm Robot kinematics package for Mathematica}
+@sp 1
+@center Version 1.1
+@center June 1992
+@sp 2
+@center Richard M. Murray
+@center Department of Mechanical Engineering
+@center California Institute of Technology
+@center Pasadena, CA 91125
+@center murray@@design.caltech.edu
+@sp 2
+@center Sudipto Sur
+@center Department of Mechanical Engineering
+@center California Institute of Technology
+@center Pasadena, CA 91125
+
+@end titlepage
+
+@node Top,,,(dir)
+@ifinfo
+@example
+    *** RobotLinks.m - Robot kinematics package for Mathematica ***
+@end example
+
+@file{RobotLinks.m} is a Mathematica package for using screws, twists, and
+wrenches to analyze robot kinematics.  It is intended to be used in
+conjuction with the text, @cite{A Mathematical Introduction to Robotic
+Manipulation}, by Z. Li, R. M. Murray, and S. S. Sastry, 1992.
+@end ifinfo
+
+@menu
+Main level documentation:
+
+* Introduction::		Introduction to the RobotLinks.m package
+* Rigid Body Motion::		Functions for manipulating rigid motions
+* Robot Kinematics::		Forward and inverse kinematics
+* Grasping:: 			Grasping and manipulation
+
+* Reference::			Listing of all functions, options
+@end menu
+
+@node Introduction,,,Top
+@chapter Introduction
+
+@node Rigid Body Motion,,,Top
+@chapter Rigid Body Motion
+
+@node Robot Kinematics,,,Top
+@chapter Robot Kinematics
+
+@node Grasping,,,Top
+@chapter Grasping
+
+@c
+@c Reference section
+@c
+@c Each entry in this section is formatted as follows
+@c
+@c 	Node description
+@c	@bullet@ @code{Command name}
+@c	Command description (@quotation)
+@c
+@c The three sections should be separated by spaces to get things to
+@c look right in the printed manual.
+
+@page
+@node Reference,,,Top
+@chapter Reference
+
+This section gives an alphabetical list of the commands and options
+defined in @file{Simulate.m}.
+
+@menu
+Rotations
+* RotationAxis::	find the axis of rotation for a rotation matrix
+* RotationQ::		test if a matrix is a rotation matrix
+* Skew::		generate 3x3 skew-symmetric matrix from vector
+* UnSkew::		generate vector from 3x3 skew-symmetrix matrix
+* SkewExp::		matrix exponential of a skew-symmetrix matrix
+
+Homogeneous coordinates
+* PointToHomogeneous::	representation of a point in homogeneous coordinates
+* VectorToHomogeneous::	representation of a vector in homogeneous coordinates
+* RPToHomogeneous::	homogeneous representation of a (R, p) pair
+* TwistToHomogeneous::	convert 6-vector to 4x4 matrix
+
+Rigid motions
+* RigidAdjoint::	find the 6x6 adjoint matrix of a rigid motion
+* RigidOrientation::	extract rotation matrix from rigid motion
+* RigidPosition::	extract position vector from rigid motion
+
+Twists and screws
+* RigidTwist::		find the twist associated with a rigid motion
+* TwistAxis::		find the axis of a twist
+* TwistExp::		matrix exponential of twist
+* TwistMagnitude::	find the magnitude of a twist
+* TwistPitch::		find the pitch of a twist
+
+Robot kinematics and grasping
+* ContactBasis::
+* PrismaticTwist::
+* RevoluteTwist::
+* RobotSpatialJacobian::
+* WrenchTransformation::
+
+Miscellaneous functions
+* CrossProduct::
+* Magnitude::
+* StackRows::
+* StackCols::
+
+@end menu
+
+@c -------- ContactBasis
+@node ContactBasis,CrossProduct,,Reference
+@findex ContactBasis
+@bullet{} @code{ContactBasis}
+
+@quotation
+@code{ContactBasis[PCNF/PCWF/SF]} returns the corresponding basis matrix
+
+@code{ContactBasis}
+<description>
+@refill
+
+@end quotation
+
+@c -------- CrossProduct
+@node CrossProduct,Magnitude,ContactBasis,Reference
+@findex CrossProduct
+@bullet{} @code{CrossProduct}
+
+@quotation
+@code{CrossProduct[v1,v2]} gives the cross product of two 3 D vectors
+
+@code{CrossProduct}
+<description>
+@refill
+
+@end quotation
+
+@c -------- Magnitude
+@node Magnitude,PointToHomogeneous,CrossProduct,Reference
+@findex Magnitude
+@bullet{} @code{Magnitude}
+
+@quotation
+@code{Magnitude[w]} returns the magnitude of a 3-vector w
+
+@code{Magnitude}
+<description>
+@refill
+
+@end quotation
+
+@c -------- PointToHomogeneous
+@node PointToHomogeneous,PrismaticTwist,Magnitude,Reference
+@findex PointToHomogeneous
+@bullet{} @code{PointToHomogeneous}
+
+@quotation
+@code{PointToHomogeneous[q]} gives the homogeneous representation of a point.
+
+@code{PointToHomogeneous} converts a point in Euclidean space
+to its homogeneous representation by appending a `1' to the vector.
+@refill
+
+@end quotation
+
+@c -------- PrismaticTwist
+@node PrismaticTwist,RevoluteTwist,PointToHomogeneous,Reference
+@findex PrismaticTwist
+@bullet{} @code{PrismaticTwist}
+
+@quotation
+@code{PrismaticTwist[q, w]} gives the twist coordinates for a twist with
+axis w through the point q
+
+@code{PrismaticTwist}
+<description>
+@refill
+
+@end quotation
+
+@c -------- RevoluteTwist
+@node RevoluteTwist,RobotSpatialJacobian,PrismaticTwist,Reference
+@findex RevoluteTwist
+@bullet{} @code{RevoluteTwist}
+
+@quotation
+@code{RevoluteTwist[q, w]} gives the twist coordinates for a twist with
+axis w through a point q
+
+@code{RevoluteTwist}
+<description>
+@refill
+
+@end quotation
+
+@c -------- RobotSpatialJacobian
+@node RobotSpatialJacobian,RPToHomogeneous,RevoluteTwist,Reference
+@findex RobotSpatialJacobian
+@bullet{} @code{RobotSpatialJacobian}
+
+@quotation
+@code{RobotSpatialJacobian[@{xi1, th1@}, ..., @{xin, thn@}]} gives the
+Jacobian of a robot with the given twists and angles
+
+@code{RobotSpatialJacobian}
+<description>
+@refill
+
+@end quotation
+
+@c -------- RPToHomogeneous
+@node RPToHomogeneous,RigidAdjoint,RobotSpatialJacobian,Reference
+@findex RPToHomogeneous
+@bullet{} @code{RPToHomogeneous}
+
+@quotation
+@code{RPToHomogeneous[R,p]} forms homogeneous matrix from rotation
+matrix R and position vector p.
+
+@code{RPToHomogeneous} converts an element (R, p) in SE(3) into a 4x4 matrix.
+@refill
+
+@end quotation
+
+@c -------- RigidAdjoint
+@node RigidAdjoint,RigidOrientation,RPToHomogeneous,Reference
+@findex RigidAdjoint
+@bullet{} @code{RigidAdjoint}
+
+@quotation
+@code{RigidAdjoint[g]} gives the adjoint matrix corresponding to g.
+
+@code{RigidAdjoint} constructs a 6x6 matrix which represents the adjoint
+of the rigid transformation @code{g}.  The rigid transformation @code{g}
+should be a 4x4 homogeneous matrix representing and element of SE(3).
+See also @code{RPToHomogeneous}.
+@refill
+
+@end quotation
+
+@c -------- RigidOrientation
+@node RigidOrientation,RigidPosition,RigidAdjoint,Reference
+@findex RigidOrientation
+@bullet{} @code{RigidOrientation}
+
+@quotation
+@code{RigidOrientation[g]} extracts the rotation matrix @code{R} from @code{g}.
+
+@code{RigidOrientation} extracts the rotation component of a rigid
+motion from the 4x4 homogeneous matrix @code{g}.  See also
+@code{RigidPosition}.
+@refill
+
+@end quotation
+
+@c -------- RigidPosition
+@node RigidPosition,RigidTwist,RigidOrientation,Reference
+@findex RigidPosition
+@bullet{} @code{RigidPosition}
+
+@quotation
+@code{RigidPosition[g]} extracts the position vector @code{p} from @code{g}.
+
+@code{RigidPosition} extracts the translational component of a rigid
+motion from the 4x4 homogeneous matrix @code{g}.  See also
+@code{RigidOrientation}.
+@refill
+
+@end quotation
+
+@c -------- RigidTwist
+@node RigidTwist,RotationAxis,RigidPosition,Reference
+@findex RigidTwist
+@bullet{} @code{RigidTwist}
+
+@quotation
+@code{RigidTwist[g]} returns an equivalent twist given a rigid motion @code{g}.
+
+@code{RigidTwist} calculates a twist which generates the rigid motion
+@code{g}.  This twist is not unique.
+@refill
+
+@end quotation
+
+@c -------- RotationAxis
+@node RotationAxis,RotationQ,RigidTwist,Reference
+@findex RotationAxis
+@bullet{} @code{RotationAxis}
+
+@quotation
+@code{RotationAxis[R]} finds the rotation axis for a rotation matrix.
+
+@code{RotationAxis} finds an equivalent axis for a given rotation
+matrix.
+@refill
+
+@end quotation
+
+@c -------- RotationQ
+@node RotationQ,Skew,RotationAxis,Reference
+@findex RotationQ
+@bullet{} @code{RotationQ}
+
+@quotation
+@code{RotationQ[M]} tests wether a matrix @code{M} is a rotation matrix.
+
+@code{RotationQ} checks to see if @code{M} is a 3x3 matrix which satisfies
+@code{Transpose[M] . M == IdentityMatrix[3]} and @code{Det[M] == 1}.
+@code{RotationQ} may return @code{False} for non-numeric matrices.
+@refill
+
+@end quotation
+
+@c -------- Skew
+@node Skew,SkewExp,RotationQ,Reference
+@findex Skew
+@bullet{} @code{Skew}
+
+@quotation
+@code{Skew[w]} generates a skew-symmetric matrix given a 3-vector @code{w}.
+
+@code{Skew} returns a 3x3 matrix which represents the cross product operator.
+@refill
+
+@end quotation
+
+@c -------- SkewExp
+@node SkewExp,StackCols,Skew,Reference
+@findex SkewExp
+@bullet{} @code{SkewExp}
+
+@quotation
+@code{SkewExp[w, theta]} gives the matrix exponential of an axis
+@code{w}.  Default value of @code{theta} is 1.
+
+@code{SkewExp} uses Rodriguez's formula to calculate the matrix
+exponential of a skew-symmetric matrix.  @code{w} can either be a
+3-vector or a skew-symmetrix matrix.
+@refill
+
+@end quotation
+
+@c -------- StackCols
+@node StackCols,StackRows,SkewExp,Reference
+@findex StackCols
+@bullet{} @code{StackCols}
+
+@quotation
+@code{StackCols[mat1, mat2, ...]} stacks matrix columns together
+
+@code{StackCols}
+<description>
+@refill
+
+@end quotation
+
+@c -------- StackRows
+@node StackRows,TwistAxis,StackCols,Reference
+@findex StackRows
+@bullet{} @code{StackRows}
+
+@quotation
+@code{StackRows[mat1, mat2, ...]} stacks matrix rows together
+
+@code{StackRows}
+<description>
+@refill
+
+@end quotation
+
+@c -------- TwistAxis
+@node TwistAxis,TwistExp,StackRows,Reference
+@findex TwistAxis
+@bullet{} @code{TwistAxis}
+
+@quotation
+@code{TwistAxis[xi]} gives axis of a screw corresponding to a twist.
+
+@code{TwistAxis}
+@refill
+
+@end quotation
+
+@c -------- TwistExp
+@node TwistExp,TwistMagnitude,TwistAxis,Reference
+@findex TwistExp
+@bullet{} @code{TwistExp}
+
+@quotation
+@code{TwistExp[xi, theta]} gives the matrix exponential of a twist
+@code{xi}.  Default value of @code{theta} is 1.
+
+@code{TwistExp} computes the matrix exponential of a twist.  The twist
+may be specified as either a 6-vector (which will be converted to a 4x4
+matrix with @code{TwistToHomogeneous}) or a 4x4 twist matrix.
+@refill
+
+@end quotation
+
+@c -------- TwistMagnitude
+@node TwistMagnitude,TwistPitch,TwistExp,Reference
+@findex TwistMagnitude
+@bullet{} @code{TwistMagnitude}
+
+@quotation
+@code{TwistMagnitude[xi]} returns the magnitude of a twist.
+
+@code{TwistMagnitude} returns the magnitude of a twist vector or matrix.
+@refill
+
+@end quotation
+
+@c -------- TwistPitch
+@node TwistPitch,TwistToHomogeneous,TwistMagnitude,Reference
+@findex TwistPitch
+@bullet{} @code{TwistPitch}
+
+@quotation
+@code{TwistPitch[xi]} returns the pitch of a twist.
+
+@code{TwistPitch} returns the pitch of a twist vector or matrix.  An
+inifinite pitch twist returns @code{Inifinity}.
+@refill
+
+@end quotation
+
+@c -------- TwistToHomogeneous
+@node TwistToHomogeneous,UnSkew,TwistPitch,Reference
+@findex TwistToHomogeneous
+@bullet{} @code{TwistToHomogeneous}
+
+@quotation
+@code{TwistToHomogeneous[xi]} converts @code{xi} from a 6 vector to a
+4X4 matrix.
+
+@code{TwistToHomogeneous} converts a twist to its 4x4 homogeneous
+representation.
+@refill
+
+@end quotation
+
+@c -------- UnSkew
+@node UnSkew,VectorToHomogeneous,TwistToHomogeneous,Reference
+@findex UnSkew
+@bullet{} @code{UnSkew}
+
+@quotation
+@code{UnSkew[S]} extracts a vector from a skew-symmetric matrix S.
+
+@code{UnSkew} extracts a 3-vector from a 3x3 skew-symmetric matrix.
+@refill
+
+@end quotation
+
+@c -------- VectorToHomogeneous
+@node VectorToHomogeneous,WrenchTransformation,UnSkew,Reference
+@findex VectorToHomogeneous
+@bullet{} @code{VectorToHomogeneous}
+
+@quotation
+@code{VectorToHomogeneous[q]} gives the homogeneous representation of a point.
+
+@code{VectorToHomogeneous} converts a point in Euclidean space
+to its homogeneous representation by appending a `1' to the vector.
+@refill
+
+@end quotation
+
+@c -------- WrenchTransformation
+@node WrenchTransformation,,VectorToHomogeneous,Reference
+@findex WrenchTransformation
+@bullet{} @code{WrenchTransformation}
+
+@quotation
+@code{WrenchTransformation[g]} gives the wrench transformation matrix
+corresponding to the rigid motion g
+
+@code{WrenchTransformation}
+<description>
+@refill
+
+@end quotation
+
+@c 
+@c Index
+@c
+@iftex
+@unnumbered Index
+@printindex cp
+@end iftex
+
+@bye

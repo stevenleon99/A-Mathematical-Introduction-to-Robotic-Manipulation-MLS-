@@ -1,0 +1,8 @@
+This directory contains the source code for the RobotLinks.m package.
+Documentation for the package is in the following files:
+
+    screw.txi		texinfo source code
+    screw.info		compiled texinfo code (for use by GNU emacs)
+    screw.ps		PostScript version
+
+RMM, 3 Jan 91
