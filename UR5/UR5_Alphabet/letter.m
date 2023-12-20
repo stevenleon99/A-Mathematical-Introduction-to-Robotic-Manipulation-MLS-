@@ -205,9 +205,7 @@ classdef letter
                 
                 start = [1,2,0]; endpoint = [0,1,0]; length = 0;
                 output = [output;arc_and_line(start,endpoint,length,0,ratio)];
-                
-                output = [output;up;ratio*[0,1,1];down];
-                
+
                 start = [0,1,0]; endpoint = [1,0,0]; length = 0;
                 output = [output;arc_and_line(start,endpoint,length,0,ratio)];
                 

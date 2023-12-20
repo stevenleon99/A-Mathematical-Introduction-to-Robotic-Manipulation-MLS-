@@ -7,10 +7,10 @@ function points_set = arc_and_line(start,endpoint,length,type,ratio)
 % length is the angle, note that postive is counterclock
 
 % default length of line is divided into 10 points for speed
-line_set = 10;
-arc_set = 20;
-start = start*ratio;
-endpoint = endpoint*ratio;
+line_set = 10;% 10 points for line
+arc_set = 20; %20 points for arc
+start = start*ratio; %start point should be scaled
+endpoint = endpoint*ratio; %end point should be scaled
 if type == 0 
     points_set = zeros(line_set,3);
     points_set(:,1) = linspace(start(1),endpoint(1),line_set)';
@@ -21,7 +21,7 @@ end
 if type == 1
     points_set = zeros(arc_set,3);
     r = norm(start-endpoint); 
-    if (start(1)-endpoint(1)) == 0 
+    if (start(1)-endpoint(1)) == 0 % avoid vertical situation
         if (start(2) - endpoint(2)) > 0 
             theta_original = pi/2;
         else

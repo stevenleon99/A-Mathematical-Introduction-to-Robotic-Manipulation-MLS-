@@ -5,7 +5,8 @@ addpath('InvKin_UR5');
 % start the ur5_interface
 ur5 = ur5_interface();
 % move to nearby position of teaching
-ur5.move_joints(deg2rad([-90; -97.6501; -115.3289; -55.6628; 91.3168; 0]), 10)
+ur5.move_joints(deg2rad([-90; -97.6501; -115.3289; -55.6628; 91.3168; 0]), 20);
+pause(20);
 
 s1 = 'NULL';
 e1 = 'NULL';
@@ -56,10 +57,10 @@ end
 % use simulation mode when simulate offline
 if mode == 2
     fprintf("simu mode selected \n");
-    % q_s1 = deg2rad(input('Input start point joint matrix 6X1 (degree): \n'));
-    % q_e1 = deg2rad(input('Input end point joint matrix 6X1 (degree): \n'));
-    q_s1 = deg2rad([-90.109278, -112.233509, -120.854908, -35.869582, 91.048015, -0.060722]');
-    q_e1 = deg2rad([-94.347798, -127.697953, -93.107041, -48.237714, 91.126080, -4.518129]');
+    q_s1 = deg2rad(input('Input start point joint matrix 6X1 (degree): \n'));
+    q_e1 = deg2rad(input('Input end point joint matrix 6X1 (degree): \n'));
+    % q_s1 = deg2rad([-90.109278, -112.233509, -120.854908, -35.869582, 91.048015, -0.060722]');
+    % q_e1 = deg2rad([-94.347798, -127.697953, -93.107041, -48.237714, 91.126080, -4.518129]');
 end
 
 
@@ -72,7 +73,7 @@ end
 % Define variables used across control methods
 gs1 = ur5FwdKin(q_s1);
 ge1 = ur5FwdKin(q_e1);
-pen_length = 0.12; % maximum 0.12228 
+pen_length = 0.05; % maximum 0.12228 
 gtp = [eye(3), [0; -0.049; pen_length]; 0 0 0 1]; % g from tool0 to pen_tip
 
 % teach point without pen
@@ -139,7 +140,10 @@ while (n ~= 0)
             ur5.move_joints(q_ready, 10);
             pause(10);
             InvKinControl(q_ready,q_s1,ur5);
-
+            
+            %display error
+            reportError(ur5FwdKin(ur5.get_current_joints()), gs1);
+            tic;
             % drawing line1
             InvKinControl(q_s1,q_middle_point1, ur5);
             
@@ -148,11 +152,17 @@ while (n ~= 0)
             
             % drawing line3
             InvKinControl(q_middle_point2, q_e1, ur5);
+            
+            %display error
+            reportError(ur5FwdKin(ur5.get_current_joints()), ge1);
+            time_elapse = toc;
+            disp("running time for IK / s: ");
+            disp(time_elapse);
 
         case 2 %Resolved-Rate Control
 
             % Define the gain
-            K = 0.3;
+            K = 0.25;
 
             ur5.move_joints(q_ready, 10);
             pause(10);
@@ -167,6 +177,9 @@ while (n ~= 0)
             % drawing line3
             err4 = ur5RRcontrol(ge1, K, ur5);
 
+            disp(err1);
+            disp(err4);
+
         case 3 %Transpose Jacobian
              % Define the gain
             K = 1;
@@ -176,9 +189,14 @@ while (n ~= 0)
             err1 = ur5JTcontrol(gs1, K, ur5);
 
             % drawing line
-            err2 = ur5JTcontrol(ge1, K, ur5);
+            for n = 1:50
+                insert_point = gs1 + (ge1 - gs1) / 50 * n;
+                err2 = ur5JTcontrol(insert_point, K, ur5);
+            end
+            
             disp(err1);
             disp(err2);
+            
     end
     
     n = input('Press "1" for Inverse Kinematic Control. \n Press "2" for Resolved-Rate Control. \n Press "3" for Transpose Jacobian Control. \n Press "0" to exit.');

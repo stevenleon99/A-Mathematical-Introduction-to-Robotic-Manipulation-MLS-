@@ -7,12 +7,13 @@ function finalerr = ur5RRcontrol(g_des, K, ur5)
     % error in cm.
     
     % Define time step and parameter thresholds
-    t_step = 0.1;
+    t_step = 0.4;
     mani_thres = 0.03;
     w_thres = 0.002;
     v_thres = 0.002;
     
-    % Compute desired position
+    % Compute desired rotation and position
+    r_des = g_des(1:3, 1:3);
     pos_des = g_des(1:3, 4);
     
     while true
@@ -40,9 +41,12 @@ function finalerr = ur5RRcontrol(g_des, K, ur5)
         xi_k = getXi(g_des \ g_k);
         % Terminate when the current twist scale is small
         if norm(xi_k(1:3)) < v_thres && norm(xi_k(4:6)) < w_thres
-            % Compute and return the positional error in cm
+            % Compute and return the rotational and positional error in cm
+            r_k = g_k(1:3, 1:3);
             pos_k = g_k(1:3, 4);
-            finalerr = 100 * norm(pos_des - pos_k);
+            err_r = sqrt(trace((r_k - r_des)*transpose(r_k - r_des)));
+            err_p = 100 * norm(pos_des - pos_k);
+            finalerr = [err_r; err_p];
             return
         end
         

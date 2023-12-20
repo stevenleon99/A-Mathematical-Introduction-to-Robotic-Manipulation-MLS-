@@ -1,17 +1,16 @@
 %% matlab test file
 ur5 = ur5_interface();
-K = 0.75;
+K = 0.75; %RR_control gain
 signal = 0;
 
 %% initalization
 % the start point should be at left_buttom 
 while signal == 0
     prompt = "Is this the initial writing position? 1 or 0: ";
-    ur5.swtich_to_pendant_control() 
     X = input(prompt);
     if X == 1
         signal = 1;
-        left_start = ur5.get_current_joints();
+        left_start = ur5.get_current_joints(); % get first written location
         disp('initial position recorded!');
     end
 end
@@ -23,11 +22,12 @@ while signal == 0
     X = input(prompt);
     if X == 1
         signal = 1;
-        right_end = ur5.get_current_joints();
+        right_end = ur5.get_current_joints(); % get final written location
         disp('final position recorded!');
     end
 end
-ur5.swtich_to_ros_control();
-Word = alphabet('RDKDC',ur5,K,left_start,right_end);
-Word.draw('rviz');
+
+
+Word = alphabet('RDKDC',ur5,K,left_start,right_end); %any word is ok
+Word.draw('mplot'); %used in simulation
 

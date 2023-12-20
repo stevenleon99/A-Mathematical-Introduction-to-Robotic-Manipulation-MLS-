@@ -36,9 +36,9 @@ classdef alphabet
             %control gain constant
             
             
-            obj.text = inputPhrase;
-            obj.robot = robot;
-            obj.K = K;
+            obj.text = inputPhrase; %the word
+            obj.robot = robot; %ur5
+            obj.K = K; % RR gain
             
             
             %Environmental and ur5 constants
@@ -48,9 +48,9 @@ classdef alphabet
             obj.writepose = [0 -1 0;
                              0 0 1;
                             -1 0 0];%pose of the end effector during writing
-            %obj.homeposejoints = [1.2900 -1.1000 1.4200 -1.9478 -1.5080 -0.1257]'; %default homepose in sumlation
-            obj.homeposejoints = left_start; % use for real movement if necessary
-            obj.finaljoints = right_end; % use for real movement if necessary
+            obj.homeposejoints = [1.2900 -1.1000 1.4200 -1.9478 -1.5080 -0.1257]'; %default homepose used in sumlation
+            %obj.homeposejoints = left_start; % use for real movement if necessary
+            %obj.finaljoints = right_end; % use for real movement so 
             
             obj.gap = 0.002;%check mm or cm
             
@@ -69,15 +69,15 @@ classdef alphabet
         end
         
         function obj = getOrigin(obj)
-            %Can be adjusted in real experiment
+            %the following four lines are to be used in real experiment
 
-            obj.start_position = ur5FwdKin(obj.homeposejoints); % teach start point in base coordinate
-            obj.end_position = ur5FwdKin(obj.finaljoints); % teach end points in base coordinate
-            number_of_word = numel(obj.text);
-            obj.ratio = norm(obj.start_position(1,4)-obj.end_position(1,4))/(number_of_word);
+            %obj.start_position = ur5FwdKin(obj.homeposejoints); % teach start point in base coordinate
+            %obj.end_position = ur5FwdKin(obj.finaljoints); % teach end points in base coordinate
+            %number_of_word = numel(obj.text);
+            %obj.ratio = norm(obj.start_position(1,4)-obj.end_position(1,4))/(number_of_word*1.1);
 
             
-            %obj.ratio = 0.07; % use in simulation and in real if necessary
+            obj.ratio = 0.07; % used in simulation
 
         end
         
@@ -85,8 +85,8 @@ classdef alphabet
                 disp('pen up');
                 qcur = obj.robot.get_current_joints();
                 gcur = ur5FwdKin(qcur);
-                g_desired = gcur;
-                g_desired(3,4) = g_desired(3,4)+obj.liftedHeight;
+                g_desired = gcur; 
+                g_desired(3,4) = g_desired(3,4)+obj.liftedHeight; % at the current place lift the pen
         end
         
         function g_desired = down_pen(obj)
@@ -94,36 +94,35 @@ classdef alphabet
                 qcur = obj.robot.get_current_joints();
                 gcur = ur5FwdKin(qcur);
                 g_desired = gcur;
-                g_desired(3,4) = g_desired(3,4)-obj.downHeight;
+                g_desired(3,4) = g_desired(3,4)-obj.downHeight; % at the current place drop the pen
         end
         
         function g_desired = finished(obj)
                 disp('word_finish');
                 g_desired = ur5FwdKin(obj.homeposejoints);
-                g_desired(3,4) = g_desired(3,4)+obj.liftedHeight;
-                %g_desired(1,4) = g_desired(1,4)+x_offset_for_matrix+2*obj.ratio+obj.gap;
+                g_desired(3,4) = g_desired(3,4)+obj.liftedHeight; % at the current place lift the pen
         end
         
         function draw(obj, mplot)
-            if strcmp(mplot, 'mplot')
+            if strcmp(mplot, 'mplot') % this is for matlab output 
                 hold on;
                 output = [];
                 x_offset = 0;
                 for i = 1:numel(obj.text)
-                    curLetter = letter(obj.text(i),obj.ratio);
+                    curLetter = letter(obj.text(i),obj.ratio); % get current letter
                     for j = 1:size(curLetter.points)
-                        if curLetter.points == [-4 -4 -4]
-                            x_offset = x_offset + obj.ratio*2+obj.gap;
+                        if curLetter.points == [-4 -4 -4] % signal for space
+                            x_offset = x_offset + obj.ratio*2+obj.gap; % the next time starting point 
                             continue;
                         end
-                        curLetter.points(j,1) = curLetter.points(j,1) + x_offset;
+                        curLetter.points(j,1) = curLetter.points(j,1) + x_offset; % revise coordinates
                     end
-                    output = [output;curLetter.points];
+                    output = [output;curLetter.points]; % scattered points
                     x_offset = x_offset + obj.ratio*2+obj.gap;
                 end
-                scatter(output(:,1),output(:,2));
+                scatter(output(:,1),output(:,2)); %plot in matlab
             end
-            if strcmp(mplot, 'rviz')
+            if strcmp(mplot, 'rviz') % simulation and experiment
                obj.homenoRR(); % go back to original 
                pause(5);
                disp('initialization complete');
@@ -131,13 +130,13 @@ classdef alphabet
                x_offset = 0;
                g_desired = ur5FwdKin(obj.homeposejoints);
                g_desired(3,4) = g_desired(3,4) + obj.liftedHeight;
-               s = ur5RRcontrol(g_desired,obj.K,obj.robot);%first pen shoud be up
+               s = ur5RRcontrol(g_desired,obj.K,obj.robot);%at first location pen shoud be up
                 for i = 1:numel(obj.text)
                     output =[];
                     curLetter = letter(obj.text(i),obj.ratio);
                     for j = 1:size(curLetter.points)
                         if curLetter.points == [-4 -4 -4]
-                            x_offset = x_offset + obj.ratio*2+obj.gap;
+                            x_offset = x_offset + obj.ratio*1.2+obj.gap;
                             continue;
                         end
                         curLetter.points(j,1) = curLetter.points(j,1) + x_offset;
@@ -145,46 +144,48 @@ classdef alphabet
                     disp('current letter is');
                     disp(obj.text(i));
                     output = curLetter.points;
-                    g_desired(1:3,4) = g_desired(1:3,4)+output(1,:)';
+                    g_desired(1:3,4) = g_desired(1:3,4)+output(1,:)'; %move to written letter's first coordinates
                     g_start = g_desired;
+                    s = ur5RRcontrol(g_start,obj.K,obj.robot); %useless term_s 
                     g_start(3,4) = g_start(3,4) - obj.downHeight; % when move to the first point of the letter, the pen is down
-                    s = ur5RRcontrol(g_start,obj.K,obj.robot); %useless term_s and 
+                    s = ur5RRcontrol(g_start,obj.K,obj.robot);
                     g_start(1:3,4) = g_start(1:3,4) - output(1,:)'; % correct the coordinate to left-buttom of 2X2 block
                     signal = 0;
                     for kk = 1:size(output)
-                        if output(kk,2:3) == [-1 -1]
+                        if output(kk,2:3) == [-1 -1] %pen up signal
                             g_desired = obj.up_pen();
                             s = ur5RRcontrol(g_desired,obj.K,obj.robot);
-                            tf_frame('base_link', 'desired_frame', g_desired);
+                            g_start(3,4) = g_start(3,4) + obj.liftedHeight;
                             signal = 1;
+                            pause(1);
                         end
                         if output(kk,2:3) == [-2 -2]
-                            g_desired = obj.down_pen();
+                            g_desired = obj.down_pen();%pen down signal
                             s = ur5RRcontrol(g_desired,obj.K,obj.robot);
-                            tf_frame('base_link', 'desired_frame', g_desired);
+                            g_start(3,4) = g_start(3,4) - obj.downHeight;
                             signal = 1;
+                            pause(1);
                         end
-                        if output(kk,2:3) == [-3 -3]
-                            g_desired = obj.finished();
+                        if output(kk,2:3) == [-3 -3]%word finish signal
+                            g_desired = obj.finished(); 
                             s = ur5RRcontrol(g_desired,obj.K,obj.robot);
                             tf_frame('base_link', 'desired_frame', g_desired);
                             signal = 1;
-                            pause(5);
+                            pause(1);
                         end
                         if output(kk,2:3) == [-4 -4]
                            break;
                         end
-                        if signal == 0 
+                        if signal == 0 %if no specific signal, do writing
                             g_desired(1:3,4) = g_start(1:3,4)+output(kk,:)';
                             disp(kk);
                             disp(g_desired);
                             s = ur5RRcontrol(g_desired,obj.K,obj.robot);
-                            tf_frame('base_link', 'desired_frame', g_desired);
                             pause(0.5);
                         end
                         signal = 0;
                     end
-                    x_offset = x_offset + obj.ratio+obj.gap;
+                    x_offset = x_offset + obj.ratio*1.2+obj.gap; % word finish move away to avoid overlap
                 end 
 
             end

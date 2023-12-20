@@ -11,7 +11,7 @@ if R == I
     xi(1:3) = P;
     return;
 end
-if R(1,2) < 0.0001 || R(3,2) <0.0001
+if R(1,2) < 0.0001 || R(3,2) <0.0001 %add this term to give some tolerance
     xi(1:3) = P;
     return;
 else
