@@ -1,0 +1,20 @@
+% Test Case
+vertices = [-1 0 1; 0 1 0];
+pt1 = [0; 2];
+pt2 = [-1; 0.5];
+pt3 = [-1.5; 0];
+pt4 = [0; -1];
+pt5 = [1.5; 0];
+pt6 = [1; 0.5];
+[cloest_pt, ~] = CloestPointOnTriangleToPoint(vertices, pt1);
+fprintf("cloest_pt of pt1: %f %f \n", cloest_pt(1), cloest_pt(2));
+[cloest_pt, ~] = CloestPointOnTriangleToPoint(vertices, pt2);
+fprintf("cloest_pt of pt2: %f %f \n", cloest_pt(1), cloest_pt(2));
+[cloest_pt, ~] = CloestPointOnTriangleToPoint(vertices, pt3);
+fprintf("cloest_pt of pt3: %f %f \n", cloest_pt(1), cloest_pt(2));
+[cloest_pt, ~] = CloestPointOnTriangleToPoint(vertices, pt4);
+fprintf("cloest_pt of pt4: %f %f \n", cloest_pt(1), cloest_pt(2));
+[cloest_pt, ~] = CloestPointOnTriangleToPoint(vertices, pt5);
+fprintf("cloest_pt of pt5: %f %f \n", cloest_pt(1), cloest_pt(2));
+[cloest_pt, ~] = CloestPointOnTriangleToPoint(vertices, pt6);
+fprintf("cloest_pt of pt6: %f %f \n", cloest_pt(1), cloest_pt(2));
